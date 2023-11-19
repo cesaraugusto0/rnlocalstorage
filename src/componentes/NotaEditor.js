@@ -1,10 +1,24 @@
 import React, { useState } from "react"
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native"
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function NotaEditor() {
 
   const [texto, setTexto] = useState("")
   const [modalVisivel, setModalVisivel] = useState(false)
+
+  async function salvaNota() {
+    const umaNota = {
+      id: "1",
+      texto: texto,
+    }
+    await AsyncStorage.setItem(umaNota.id, umaNota.texto);
+    mostraNota();
+  }
+
+  async function mostraNota() {
+    console.log(await AsyncStorage.getItem("1"));
+  }
 
   return(
     <>
@@ -14,7 +28,7 @@ export default function NotaEditor() {
         visible={modalVisivel}
         onRequestClose={() => {setModalVisivel(false)}}
       >
-        <View style={estilos.centralizaModal}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={estilos.centralizaModal}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={estilos.modal}>
               <Text style={estilos.modalTitulo}>Criar nota</Text>
@@ -27,7 +41,7 @@ export default function NotaEditor() {
                 placeholder="Digite aqui seu lembrete"
                 value={texto}/>
               <View style={estilos.modalBotoes}>
-                <TouchableOpacity style={estilos.modalBotaoSalvar}>
+                <TouchableOpacity style={estilos.modalBotaoSalvar} onPress={salvaNota}>
                   <Text style={estilos.modalBotaoTexto}>Salvar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={estilos.modalBotaoCancelar} onPress={() => {setModalVisivel(false)}}>
@@ -36,7 +50,7 @@ export default function NotaEditor() {
               </View>
             </View>
           </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
       <TouchableOpacity onPress={() => {setModalVisivel(true)}} style={estilos.adicionarMemo}>
         <Text style={estilos.adicionarMemoTexto}>+</Text>
