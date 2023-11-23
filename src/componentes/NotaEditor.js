@@ -26,8 +26,6 @@ export default function NotaEditor({mostraNotas}) {
     return todasChaves.length + 1;
   }
 
-  async function mostraNota() {
-  }
 
   return(
     <>
